@@ -746,29 +746,36 @@
             }
         }
 
-        async function handleTaskSubmit(event) {
-            event.preventDefault();
-            const form = document.getElementById('task-form');
+        function getTaskFormElements() {
+            return {
+                form: document.getElementById('task-form'),
+                banner: document.getElementById('form-banner'),
+                titleInput: document.getElementById('task-title'),
+                descriptionInput: document.getElementById('task-description'),
+                statusInput: document.getElementById('task-status'),
+                priorityInput: document.getElementById('task-priority'),
+                assigneeInput: document.getElementById('task-assignee'),
+                taskIdInput: document.getElementById('task-id')
+            };
+        }
+
+        function clearModalFeedback() {
             const banner = document.getElementById('form-banner');
-            const titleInput = document.getElementById('task-title');
-            const descriptionInput = document.getElementById('task-description');
-            const statusInput = document.getElementById('task-status');
-            const priorityInput = document.getElementById('task-priority');
-            const assigneeInput = document.getElementById('task-assignee');
-            const taskIdInput = document.getElementById('task-id');
-            if (!form || !titleInput || !descriptionInput || !statusInput || !priorityInput || !assigneeInput || !taskIdInput || !banner) return;
-
-            const title = titleInput.value.trim();
-            if (!title) {
-                showModalError('Title is required', 'title');
-                return;
+            if (banner) {
+                banner.hidden = true;
+                banner.textContent = '';
             }
+            document.querySelectorAll('[data-field-error]').forEach((element) => {
+                element.textContent = '';
+            });
+        }
 
-            const descriptionValue = descriptionInput.value.trim();
-            const statusValue = statusInput.value;
-            const priorityValue = priorityInput.value;
-            const assigneeValue = assigneeInput.value.trim() ? assigneeInput.value.trim() : null;
+        function buildTaskPayload(formElements, title) {
             const payload = {};
+            const descriptionValue = formElements.descriptionInput.value.trim();
+            const statusValue = formElements.statusInput.value;
+            const priorityValue = formElements.priorityInput.value;
+            const assigneeValue = formElements.assigneeInput.value.trim() ? formElements.assigneeInput.value.trim() : null;
 
             if (currentMode === 'create') {
                 payload.title = title;
@@ -776,43 +783,61 @@
                 payload.status = statusValue;
                 payload.priority = priorityValue;
                 payload.assignee = assigneeValue;
-            } else if (currentTaskId) {
-                const existingTask = tasks.find((item) => String(item.id) === String(currentTaskId));
-                if (existingTask) {
-                    const existingTitle = existingTask.title || '';
-                    const existingDescription = existingTask.description || '';
-                    const existingStatus = existingTask.status || 'ToDo';
-                    const existingPriority = existingTask.priority || 'Medium';
-                    const existingAssignee = existingTask.assignee || null;
-
-                    if (title !== existingTitle) {
-                        payload.title = title;
-                    }
-                    if (descriptionValue !== existingDescription) {
-                        payload.description = descriptionValue;
-                    }
-                    if (statusValue !== existingStatus) {
-                        payload.status = statusValue;
-                    }
-                    if (priorityValue !== existingPriority) {
-                        payload.priority = priorityValue;
-                    }
-                    if ((assigneeValue ?? null) !== (existingAssignee ?? null)) {
-                        payload.assignee = assigneeValue;
-                    }
-                }
+                return payload;
             }
 
+            if (!currentTaskId) {
+                return payload;
+            }
+
+            const existingTask = tasks.find((item) => String(item.id) === String(currentTaskId));
+            if (!existingTask) {
+                return payload;
+            }
+
+            const existingTitle = existingTask.title || '';
+            const existingDescription = existingTask.description || '';
+            const existingStatus = existingTask.status || 'ToDo';
+            const existingPriority = existingTask.priority || 'Medium';
+            const existingAssignee = existingTask.assignee || null;
+
+            if (title !== existingTitle) {
+                payload.title = title;
+            }
+            if (descriptionValue !== existingDescription) {
+                payload.description = descriptionValue;
+            }
+            if (statusValue !== existingStatus) {
+                payload.status = statusValue;
+            }
+            if (priorityValue !== existingPriority) {
+                payload.priority = priorityValue;
+            }
+            if ((assigneeValue ?? null) !== (existingAssignee ?? null)) {
+                payload.assignee = assigneeValue;
+            }
+            return payload;
+        }
+
+        async function handleTaskSubmit(event) {
+            event.preventDefault();
+            const formElements = getTaskFormElements();
+            const { form, banner, titleInput } = formElements;
+            if (!form || !titleInput || !banner) return;
+
+            const title = titleInput.value.trim();
+            if (!title) {
+                showModalError('Title is required', 'title');
+                return;
+            }
+
+            const payload = buildTaskPayload(formElements, title);
             if (currentMode === 'edit' && currentTaskId && Object.keys(payload).length === 0) {
                 closeModal();
                 return;
             }
 
-            banner.hidden = true;
-            banner.textContent = '';
-            document.querySelectorAll('[data-field-error]').forEach((element) => {
-                element.textContent = '';
-            });
+            clearModalFeedback();
 
             try {
                 const url = currentMode === 'edit' && currentTaskId ? `${BASE_URL}/tasks/${currentTaskId}` : `${BASE_URL}/tasks`;
