@@ -46,6 +46,24 @@ app.include_router(version_router)
 
 @app.post("/tasks", response_model=TaskResponse, status_code=status.HTTP_201_CREATED, tags=["tasks"])
 def create_task(payload: TaskCreate) -> TaskResponse:
+    """Create a new task.
+
+    Args:
+        payload: Task creation data including title, optional description, status,
+            priority, and assignee.
+
+    Returns:
+        TaskResponse: The created task with auto-generated id, created_at, and updated_at.
+
+    Raises:
+        HTTPException: 422 if payload validation fails (e.g., title is blank or exceeds
+            200 characters).
+
+    Example:
+        POST /tasks
+        {"title": "Buy groceries", "priority": "High"}
+        Response: {"id": "...", "title": "Buy groceries", ...}
+    """
     return storage.add_task(payload)
 
 
@@ -54,11 +72,39 @@ def list_tasks(
     status: Optional[TaskStatus] = None,
     priority: Optional[TaskPriority] = None,
 ) -> list[TaskResponse]:
+    """List all tasks with optional filtering.
+
+    Args:
+        status: Optional task status filter (ToDo, InProgress, Done).
+        priority: Optional task priority filter (Low, Medium, High).
+
+    Returns:
+        list[TaskResponse]: List of tasks matching the filters (empty if no matches).
+
+    Example:
+        GET /tasks?status=InProgress&priority=High
+        Response: [{"id": "...", "title": "...", ...}, ...]
+    """
     return storage.get_all_tasks(status=status, priority=priority)
 
 
 @app.get("/tasks/{task_id}", response_model=TaskResponse, tags=["tasks"])
 def get_task(task_id: str) -> TaskResponse:
+    """Retrieve a single task by ID.
+
+    Args:
+        task_id: UUID of the task to retrieve.
+
+    Returns:
+        TaskResponse: The requested task.
+
+    Raises:
+        HTTPException: 404 if the task does not exist.
+
+    Example:
+        GET /tasks/550e8400-e29b-41d4-a716-446655440000
+        Response: {"id": "550e8400-e29b-41d4-a716-446655440000", "title": "...", ...}
+    """
     task = storage.get_task_by_id(task_id)
     if task is None:
         raise HTTPException(status_code=404, detail=f"Task with id {task_id} not found")
@@ -67,6 +113,24 @@ def get_task(task_id: str) -> TaskResponse:
 
 @app.patch("/tasks/{task_id}", response_model=TaskResponse, tags=["tasks"])
 def update_task(task_id: str, payload: TaskUpdate) -> TaskResponse:
+    """Update an existing task.
+
+    Args:
+        task_id: UUID of the task to update.
+        payload: Partial task update data (only provided fields are updated).
+
+    Returns:
+        TaskResponse: The updated task with refreshed updated_at timestamp.
+
+    Raises:
+        HTTPException: 404 if the task does not exist.
+        HTTPException: 422 if the status transition is invalid (e.g., Done -> ToDo).
+
+    Example:
+        PATCH /tasks/550e8400-e29b-41d4-a716-446655440000
+        {"status": "InProgress"}
+        Response: {"id": "...", "status": "InProgress", "updated_at": "...", ...}
+    """
     if payload.status is not None:
         existing = storage.get_task_by_id(task_id)
         if existing is None:
@@ -81,6 +145,18 @@ def update_task(task_id: str, payload: TaskUpdate) -> TaskResponse:
 
 @app.delete("/tasks/{task_id}", status_code=status.HTTP_204_NO_CONTENT, tags=["tasks"])
 def delete_task(task_id: str) -> None:
+    """Delete a task by ID.
+
+    Args:
+        task_id: UUID of the task to delete.
+
+    Raises:
+        HTTPException: 404 if the task does not exist.
+
+    Example:
+        DELETE /tasks/550e8400-e29b-41d4-a716-446655440000
+        Response: 204 No Content
+    """
     if storage.delete_task(task_id):
         return
     raise HTTPException(status_code=404, detail=f"Task with id {task_id} not found")

@@ -9,5 +9,16 @@ router = APIRouter()
 
 @router.get("/version", response_model=VersionResponse, status_code=200)
 def get_version() -> VersionResponse:
-    """Return the API version."""
+    """Retrieve the API version.
+
+    Args:
+        None
+
+    Returns:
+        VersionResponse: JSON object containing the application semantic version.
+
+    Example:
+        GET /version
+        Response: {"version": "0.1.0"}
+    """
     return VersionResponse(version=__version__)
