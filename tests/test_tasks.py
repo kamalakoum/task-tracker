@@ -147,6 +147,16 @@ def test_patch_same_status_returns_422(client, created_task):
     assert "Invalid status transition" in response.json()["detail"]
 
 
+def test_patch_blank_or_whitespace_only_title_returns_422(client, created_task):
+    response = client.patch(
+        f"/tasks/{created_task['id']}",
+        json={"title": "   "},
+    )
+
+    assert response.status_code == 422
+    assert "title must not be blank" in str(response.json()["detail"])
+
+
 def test_delete_existing_returns_204_no_body(client, created_task):
     response = client.delete(f"/tasks/{created_task['id']}")
 
