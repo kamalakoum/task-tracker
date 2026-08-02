@@ -1,40 +1,36 @@
 # Personal AI Coding Playbook
 
-## 1. When I reach for AI first
+## When I reach for AI first
 
-- Repetitive code, tests, or documentation drafts where I can review every change.
-- Exploring an unfamiliar API or framework concept before I consult the primary docs.
-- Generating several implementation options for a well-defined problem.
+I reach for AI when the task is scoped, concrete, and reviewable: drafting a README section, suggesting a small CI or Docker fix, reviewing a diff line by line, or generating a few candidate solutions for a clearly bounded problem. It is most useful when I can compare the output against the repo, run the command, and decide if it belongs in the final result.
 
-## 2. When I do not reach for AI
+## When I do not reach for AI first
 
-- Decisions involving credentials, personal data, or confidential business information.
-- A production incident when I need verified facts, logs, and direct system access.
-- Work I cannot explain, test, and maintain after the AI-assisted step.
+I do not use AI as the first step for anything that touches secrets, real customer data, production systems, or a requirement I cannot verify from the repository. I also avoid it when the problem is about course learning goals, architecture design judgment, or maintainability decisions that require my own reasoning.
 
-## 3. My non-negotiables
+## My non-negotiables
 
-- I own the final code, decisions, and consequences.
-- I do not share secrets, private data, or proprietary source material without authorization.
-- I use AI output as a draft, never as unquestioned truth.
+- I will never paste credentials, secrets, tokens, or real personal data into an AI tool.
+- I own the final code, docs, and deployment decisions.
+- I treat AI output as a draft and verify every material claim with a command, a code read, or a running endpoint.
+- I keep changes inside the course scope and document any intentional exception.
 
-## 4. My review rules
+## My review rules
 
-- I read the diff and understand every material change before merging.
-- I run the relevant tests and verify the behavior against the requirement.
-- I independently check security-sensitive, data-changing, and infrastructure changes.
+- I inspect the diff before accepting any suggestion.
+- I verify tests, health checks, and Docker behavior with fresh commands instead of trusting the generated text.
+- I grade AI findings as useful, noisy, or wrong and keep the evidence of that judgment in the repo.
+- If a suggestion would add auth, database, or other new product scope, I reject it unless the brief explicitly allows it.
 
-## 5. What I am still figuring out
+## What I am still figuring out
 
-- Which tasks consistently save time without reducing my understanding?
-- How should I record meaningful AI contributions in my work?
-- What evidence should raise my review bar for AI-assisted changes?
+I am still refining how much time to spend on AI-assisted planning versus direct repo inspection. I also want clearer team norms for when a suggestion is a good draft versus when it is a risky assumption that needs a human decision.
 
 ## Decision Card
 
-- For a new feature I reach for: a design and implementation draft.
-- For a code review I reach for: a second set of eyes on the diff.
-- For debugging I reach for: hypotheses and focused investigation steps.
-- For infrastructure I reach for: an explanation of the proposed configuration.
-- I will never paste secrets or sensitive data into an AI tool.
-- My one rule is: I verify before I trust.
+- New feature: use AI for draft ideas, but verify scope before applying any change.
+- Code review: use AI to surface possible issues, then inspect and grade each point myself.
+- Debugging: use AI for hypotheses, but reproduce the issue and verify the root cause manually.
+- Infrastructure: use AI to explain configuration, but confirm the runtime result in the repo and command output.
+- Never-paste rule: no secrets, no credentials, no personal or customer data.
+- One rule: verify before I trust.
