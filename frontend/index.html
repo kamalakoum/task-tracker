@@ -326,6 +326,145 @@
             font-size: 0.9rem;
         }
 
+        .comment-count-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.22rem 0.55rem;
+            border-radius: 999px;
+            background: #eef2ff;
+            color: #3730a3;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        .comments-panel,
+        .activity-panel {
+            margin-top: 0.75rem;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 0.85rem;
+        }
+
+        .comments-panel h4,
+        .activity-panel h4,
+        .board-activity h3 {
+            margin: 0 0 0.55rem;
+            font-size: 0.92rem;
+            color: #334155;
+        }
+
+        .comments-list,
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.55rem;
+            max-height: 180px;
+            overflow-y: auto;
+            margin-bottom: 0.65rem;
+        }
+
+        .comment-item,
+        .activity-item {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background: #f8fbff;
+            padding: 0.55rem 0.7rem;
+            font-size: 0.85rem;
+        }
+
+        .comment-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.5rem;
+            align-items: flex-start;
+        }
+
+        .comment-item .comment-meta,
+        .activity-item .activity-meta {
+            color: var(--muted);
+            font-size: 0.75rem;
+            margin-top: 0.2rem;
+        }
+
+        .comment-item button {
+            border: 1px solid #fecaca;
+            background: #fff;
+            color: #b91c1c;
+            border-radius: 999px;
+            padding: 0.2rem 0.55rem;
+            font-size: 0.72rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .comment-compose {
+            display: flex;
+            gap: 0.45rem;
+        }
+
+        .comment-compose input {
+            flex: 1;
+            border: 1px solid #d6deeb;
+            border-radius: 10px;
+            padding: 0.55rem 0.7rem;
+            font: inherit;
+            background: #f8fbff;
+        }
+
+        .comment-compose button,
+        .board-activity .refresh-activity {
+            border: 1px solid transparent;
+            background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+            color: white;
+            border-radius: 999px;
+            padding: 0.5rem 0.85rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .board-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 280px;
+            gap: 1rem;
+            max-width: 1680px;
+            margin: 0 auto;
+            align-items: start;
+        }
+
+        .board-activity {
+            background: var(--column-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 1rem;
+        }
+
+        .board-activity .activity-list {
+            max-height: 70vh;
+        }
+
+        .activity-item .event-type {
+            display: inline-block;
+            font-size: 0.68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--accent-strong);
+            margin-bottom: 0.15rem;
+        }
+
+        @media (max-width: 1100px) {
+            .board-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .board-activity {
+                position: static;
+            }
+        }
+
         @media (max-width: 768px) {
             main {
                 padding: 1rem;
@@ -351,49 +490,27 @@
         </div>
     </header>
     <main>
-        <div class="task-board">
-            <section class="task-column" data-status="ToDo">
-                <h2>To Do <span class="task-count">1</span></h2>
-                <article class="task-item">
-                    <div class="task-title">Fix auth bug</div>
-                    <div class="task-description">Investigate the login issue reported by users.</div>
-                    <div class="task-meta">
-                        <span class="task-assignee">Assignee: Alex</span>
-                        <div class="task-actions">
-                            <span class="priority-pill high">High</span>
-                            <button type="button">Edit</button>
-                        </div>
-                    </div>
-                </article>
-            </section>
-            <section class="task-column" data-status="InProgress">
-                <h2>In Progress <span class="task-count">1</span></h2>
-                <article class="task-item">
-                    <div class="task-title">Implement dashboard</div>
-                    <div class="task-description">Add the new analytics cards and filters.</div>
-                    <div class="task-meta">
-                        <span class="task-assignee">Assignee: Unassigned</span>
-                        <div class="task-actions">
-                            <span class="priority-pill medium">Medium</span>
-                            <button type="button">Edit</button>
-                        </div>
-                    </div>
-                </article>
-            </section>
-            <section class="task-column" data-status="Done">
-                <h2>Done <span class="task-count">1</span></h2>
-                <article class="task-item">
-                    <div class="task-title">Write release notes</div>
-                    <div class="task-description">Draft the release summary for the team.</div>
-                    <div class="task-meta">
-                        <span class="task-assignee">Assignee: Jamie</span>
-                        <div class="task-actions">
-                            <span class="priority-pill low">Low</span>
-                            <button type="button">Edit</button>
-                        </div>
-                    </div>
-                </article>
-            </section>
+        <div class="board-layout">
+            <div class="task-board">
+                <section class="task-column" data-status="ToDo">
+                    <h2>To Do <span class="task-count">0</span></h2>
+                </section>
+                <section class="task-column" data-status="InProgress">
+                    <h2>In Progress <span class="task-count">0</span></h2>
+                </section>
+                <section class="task-column" data-status="Done">
+                    <h2>Done <span class="task-count">0</span></h2>
+                </section>
+            </div>
+            <aside class="board-activity" aria-label="Activity log">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem;">
+                    <h3>Activity</h3>
+                    <button type="button" class="refresh-activity" id="refresh-activity">Refresh</button>
+                </div>
+                <div class="activity-list" id="global-activity-list">
+                    <div class="activity-item">Loading activity…</div>
+                </div>
+            </aside>
         </div>
     </main>
     <div class="modal-overlay" id="task-modal-overlay">
@@ -438,6 +555,19 @@
                     <button type="submit" class="submit-btn">Save</button>
                 </div>
             </form>
+            <section class="comments-panel" id="comments-panel" hidden>
+                <h4>Comments</h4>
+                <div class="comments-list" id="comments-list"></div>
+                <div class="comment-compose">
+                    <input type="text" id="new-comment-text" placeholder="Add a comment" maxlength="1000">
+                    <button type="button" id="add-comment-button">Add</button>
+                </div>
+                <p class="error-text" id="comment-error"></p>
+            </section>
+            <section class="activity-panel" id="task-activity-panel" hidden>
+                <h4>Task activity</h4>
+                <div class="activity-list" id="task-activity-list"></div>
+            </section>
         </div>
     </div>
     <script>
@@ -447,6 +577,145 @@
         let draggedTaskId = null;
         let currentMode = 'create';
         let currentTaskId = null;
+
+        function formatTimestamp(value) {
+            if (!value) return '';
+            try {
+                return new Date(value).toLocaleString();
+            } catch (error) {
+                return String(value);
+            }
+        }
+
+        function renderActivityItems(container, events, emptyMessage) {
+            if (!container) return;
+            if (!events || events.length === 0) {
+                container.innerHTML = `<div class="activity-item">${escapeHtml(emptyMessage)}</div>`;
+                return;
+            }
+            container.innerHTML = events.map((event) => `
+                <div class="activity-item">
+                    <div class="event-type">${escapeHtml(event.event_type)}</div>
+                    <div>${escapeHtml(event.message)}</div>
+                    <div class="activity-meta">${escapeHtml(formatTimestamp(event.created_at))}</div>
+                </div>
+            `).join('');
+        }
+
+        async function fetchActivity() {
+            const container = document.getElementById('global-activity-list');
+            try {
+                const response = await fetch(`${BASE_URL}/activity`);
+                if (!response.ok) {
+                    throw new Error(`Request failed with status ${response.status}`);
+                }
+                const events = await response.json();
+                renderActivityItems(container, events, 'No activity yet');
+            } catch (error) {
+                renderActivityItems(container, [], error?.message || 'Unable to load activity');
+            }
+        }
+
+        async function loadTaskComments(taskId) {
+            const list = document.getElementById('comments-list');
+            const error = document.getElementById('comment-error');
+            if (!list) return;
+            if (error) error.textContent = '';
+            try {
+                const response = await fetch(`${BASE_URL}/tasks/${taskId}/comments`);
+                if (!response.ok) {
+                    throw new Error('Unable to load comments');
+                }
+                const comments = await response.json();
+                if (comments.length === 0) {
+                    list.innerHTML = '<div class="comment-item"><div>No comments yet</div></div>';
+                    return;
+                }
+                list.innerHTML = comments.map((comment) => `
+                    <div class="comment-item" data-comment-id="${escapeHtml(comment.id)}">
+                        <div>
+                            <div>${escapeHtml(comment.text)}</div>
+                            <div class="comment-meta">${escapeHtml(formatTimestamp(comment.created_at))}</div>
+                        </div>
+                        <button type="button" data-delete-comment="${escapeHtml(comment.id)}">Delete</button>
+                    </div>
+                `).join('');
+                list.querySelectorAll('[data-delete-comment]').forEach((button) => {
+                    button.addEventListener('click', () => deleteComment(taskId, button.dataset.deleteComment));
+                });
+            } catch (err) {
+                list.innerHTML = `<div class="comment-item"><div>${escapeHtml(err.message)}</div></div>`;
+            }
+        }
+
+        async function loadTaskActivity(taskId) {
+            const list = document.getElementById('task-activity-list');
+            try {
+                const response = await fetch(`${BASE_URL}/tasks/${taskId}/activity`);
+                if (!response.ok) {
+                    throw new Error('Unable to load task activity');
+                }
+                const events = await response.json();
+                renderActivityItems(list, events, 'No activity for this task');
+            } catch (error) {
+                renderActivityItems(list, [], error?.message || 'Unable to load task activity');
+            }
+        }
+
+        async function addComment() {
+            const input = document.getElementById('new-comment-text');
+            const error = document.getElementById('comment-error');
+            if (!currentTaskId || !input) return;
+            const text = input.value.trim();
+            if (!text) {
+                if (error) error.textContent = 'Comment text is required';
+                return;
+            }
+            try {
+                const response = await fetch(`${BASE_URL}/tasks/${currentTaskId}/comments`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text })
+                });
+                if (!response.ok) {
+                    let detail = 'Unable to add comment';
+                    try {
+                        const body = await response.json();
+                        detail = body?.detail || detail;
+                    } catch (parseError) {
+                        detail = response.statusText || detail;
+                    }
+                    if (error) error.textContent = typeof detail === 'string' ? detail : 'Unable to add comment';
+                    return;
+                }
+                input.value = '';
+                if (error) error.textContent = '';
+                await loadTaskComments(currentTaskId);
+                await loadTaskActivity(currentTaskId);
+                await fetchTasks();
+                await fetchActivity();
+            } catch (err) {
+                if (error) error.textContent = err?.message || 'Unable to add comment';
+            }
+        }
+
+        async function deleteComment(taskId, commentId) {
+            const error = document.getElementById('comment-error');
+            try {
+                const response = await fetch(`${BASE_URL}/tasks/${taskId}/comments/${commentId}`, {
+                    method: 'DELETE'
+                });
+                if (!response.ok) {
+                    throw new Error('Unable to delete comment');
+                }
+                await loadTaskComments(taskId);
+                await loadTaskActivity(taskId);
+                await fetchTasks();
+                await fetchActivity();
+            } catch (err) {
+                if (error) error.textContent = err?.message || 'Unable to delete comment';
+            }
+        }
 
         function escapeHtml(value) {
             return String(value ?? '')
@@ -609,6 +878,7 @@
                 const updatedTask = await response.json();
                 tasks = tasks.map((task) => String(task.id) === String(taskId) ? updatedTask : task);
                 renderBoard(tasks);
+                fetchActivity();
             } catch (error) {
                 tasks = tasks.map((task) => String(task.id) === String(taskId) ? { ...task, status: previousStatus } : task);
                 renderBoard(tasks);
@@ -668,6 +938,23 @@
             if (form) {
                 form.addEventListener('submit', handleTaskSubmit);
             }
+            const addCommentButton = document.getElementById('add-comment-button');
+            if (addCommentButton) {
+                addCommentButton.addEventListener('click', addComment);
+            }
+            const commentInput = document.getElementById('new-comment-text');
+            if (commentInput) {
+                commentInput.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        addComment();
+                    }
+                });
+            }
+            const refreshActivity = document.getElementById('refresh-activity');
+            if (refreshActivity) {
+                refreshActivity.addEventListener('click', fetchActivity);
+            }
             document.addEventListener('keydown', closeOnEscape);
         }
 
@@ -696,6 +983,13 @@
                 element.textContent = '';
             });
 
+            const commentsPanel = document.getElementById('comments-panel');
+            const activityPanel = document.getElementById('task-activity-panel');
+            const commentError = document.getElementById('comment-error');
+            const commentInput = document.getElementById('new-comment-text');
+            if (commentError) commentError.textContent = '';
+            if (commentInput) commentInput.value = '';
+
             if (mode === 'edit' && task) {
                 taskIdInput.value = task.id || '';
                 titleInput.value = task.title || '';
@@ -703,6 +997,10 @@
                 statusInput.value = task.status || 'ToDo';
                 priorityInput.value = task.priority || 'Medium';
                 assigneeInput.value = task.assignee || '';
+                if (commentsPanel) commentsPanel.hidden = false;
+                if (activityPanel) activityPanel.hidden = false;
+                loadTaskComments(task.id);
+                loadTaskActivity(task.id);
             } else {
                 taskIdInput.value = '';
                 titleInput.value = '';
@@ -710,6 +1008,8 @@
                 statusInput.value = 'ToDo';
                 priorityInput.value = 'Medium';
                 assigneeInput.value = '';
+                if (commentsPanel) commentsPanel.hidden = true;
+                if (activityPanel) activityPanel.hidden = true;
             }
             overlay.classList.add('open');
         }
@@ -862,6 +1162,7 @@
 
                 closeModal();
                 await fetchTasks();
+                await fetchActivity();
             } catch (error) {
                 showModalError(error?.message || 'Could not save task.', 'title');
             }
@@ -939,6 +1240,7 @@
                     const assignee = escapeHtml(task.assignee || 'Unassigned');
                     const priority = escapeHtml(task.priority || 'Medium');
                     const priorityClass = (task.priority || 'Medium').toLowerCase();
+                    const commentCount = Number(task.comment_count || 0);
 
                     card.innerHTML = `
                         <div class="task-title">${title}</div>
@@ -947,6 +1249,7 @@
                             <span class="task-assignee">Assignee: ${assignee}</span>
                             <div class="task-actions">
                                 <span class="priority-pill ${priorityClass}">${priority}</span>
+                                <span class="comment-count-pill">${commentCount} comment${commentCount === 1 ? '' : 's'}</span>
                                 <button type="button">Edit</button>
                             </div>
                         </div>
@@ -1003,6 +1306,7 @@
             attachColumnListeners();
             attachModalEvents();
             fetchTasks();
+            fetchActivity();
         });
     </script>
 </body>
