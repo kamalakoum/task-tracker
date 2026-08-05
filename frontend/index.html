@@ -231,11 +231,12 @@
             inset: 0;
             background: rgba(15, 23, 42, 0.5);
             display: none;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
             padding: 1rem;
             z-index: 1000;
             backdrop-filter: blur(3px);
+            overflow-y: auto;
         }
 
         .modal-overlay.open {
@@ -244,11 +245,15 @@
 
         .task-modal {
             width: min(100%, 540px);
+            max-height: calc(100vh - 2rem);
+            margin: auto;
             background: white;
             border-radius: 16px;
             padding: 1.25rem;
             box-shadow: 0 24px 50px rgba(15, 23, 42, 0.2);
             border: 1px solid #e2e8f0;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .task-modal h3 {
@@ -326,6 +331,237 @@
             font-size: 0.9rem;
         }
 
+        .comment-count-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.22rem 0.55rem;
+            border-radius: 999px;
+            background: #eef2ff;
+            color: #3730a3;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        .comments-panel,
+        .activity-panel {
+            margin-top: 0.75rem;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 0.85rem;
+        }
+
+        .comments-panel h4,
+        .activity-panel h4,
+        .board-activity h3 {
+            margin: 0 0 0.55rem;
+            font-size: 0.92rem;
+            color: #334155;
+        }
+
+        .comments-list,
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.55rem;
+            max-height: 140px;
+            overflow-y: auto;
+            margin-bottom: 0.65rem;
+        }
+
+        .comment-item,
+        .activity-item {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background: #f8fbff;
+            padding: 0.55rem 0.7rem;
+            font-size: 0.85rem;
+        }
+
+        .comment-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.5rem;
+            align-items: flex-start;
+        }
+
+        .comment-item .comment-meta,
+        .activity-item .activity-meta {
+            color: var(--muted);
+            font-size: 0.75rem;
+            margin-top: 0.2rem;
+        }
+
+        .comment-item button {
+            border: 1px solid #fecaca;
+            background: #fff;
+            color: #b91c1c;
+            border-radius: 999px;
+            padding: 0.2rem 0.55rem;
+            font-size: 0.72rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .comment-compose {
+            display: flex;
+            gap: 0.45rem;
+        }
+
+        .comment-compose input {
+            flex: 1;
+            border: 1px solid #d6deeb;
+            border-radius: 10px;
+            padding: 0.55rem 0.7rem;
+            font: inherit;
+            background: #f8fbff;
+        }
+
+        .comment-compose button,
+        .board-activity .refresh-activity {
+            border: 1px solid transparent;
+            background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+            color: white;
+            border-radius: 999px;
+            padding: 0.5rem 0.85rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .board-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 280px;
+            gap: 1rem;
+            max-width: 1680px;
+            margin: 0 auto;
+            align-items: start;
+        }
+
+        .board-toolbar {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.65rem;
+            align-items: end;
+            background: rgba(255, 255, 255, 0.82);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 0.85rem 1rem;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+            animation: toolbar-in 280ms ease;
+        }
+
+        @keyframes toolbar-in {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .board-toolbar label {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .board-toolbar select,
+        .board-toolbar input[type="text"] {
+            border: 1px solid #d6deeb;
+            border-radius: 10px;
+            padding: 0.45rem 0.65rem;
+            min-width: 140px;
+            font: inherit;
+            background: #f8fbff;
+        }
+
+        .board-toolbar .toolbar-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+            margin-left: auto;
+        }
+
+        .board-toolbar button {
+            border: 1px solid #d6deeb;
+            background: white;
+            color: #334155;
+            border-radius: 999px;
+            padding: 0.45rem 0.8rem;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.82rem;
+        }
+
+        .board-toolbar button.danger {
+            border-color: #fecaca;
+            color: #b91c1c;
+            background: #fff5f5;
+        }
+
+        .board-toolbar button.primary {
+            border-color: transparent;
+            color: white;
+            background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+        }
+
+        .task-item {
+            position: relative;
+        }
+
+        .task-item .select-task {
+            position: absolute;
+            top: 0.65rem;
+            right: 0.65rem;
+            width: 1rem;
+            height: 1rem;
+            cursor: pointer;
+        }
+
+        .task-item.selected {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.18);
+        }
+
+        .selection-hint {
+            font-size: 0.8rem;
+            color: var(--muted);
+            width: 100%;
+        }
+
+        .board-activity {
+            background: var(--column-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 1rem;
+        }
+
+        .board-activity .activity-list {
+            max-height: 70vh;
+        }
+
+        .activity-item .event-type {
+            display: inline-block;
+            font-size: 0.68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--accent-strong);
+            margin-bottom: 0.15rem;
+        }
+
+        @media (max-width: 1100px) {
+            .board-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .board-activity {
+                position: static;
+            }
+        }
+
         @media (max-width: 768px) {
             main {
                 padding: 1rem;
@@ -351,49 +587,65 @@
         </div>
     </header>
     <main>
-        <div class="task-board">
-            <section class="task-column" data-status="ToDo">
-                <h2>To Do <span class="task-count">1</span></h2>
-                <article class="task-item">
-                    <div class="task-title">Fix auth bug</div>
-                    <div class="task-description">Investigate the login issue reported by users.</div>
-                    <div class="task-meta">
-                        <span class="task-assignee">Assignee: Alex</span>
-                        <div class="task-actions">
-                            <span class="priority-pill high">High</span>
-                            <button type="button">Edit</button>
-                        </div>
-                    </div>
-                </article>
-            </section>
-            <section class="task-column" data-status="InProgress">
-                <h2>In Progress <span class="task-count">1</span></h2>
-                <article class="task-item">
-                    <div class="task-title">Implement dashboard</div>
-                    <div class="task-description">Add the new analytics cards and filters.</div>
-                    <div class="task-meta">
-                        <span class="task-assignee">Assignee: Unassigned</span>
-                        <div class="task-actions">
-                            <span class="priority-pill medium">Medium</span>
-                            <button type="button">Edit</button>
-                        </div>
-                    </div>
-                </article>
-            </section>
-            <section class="task-column" data-status="Done">
-                <h2>Done <span class="task-count">1</span></h2>
-                <article class="task-item">
-                    <div class="task-title">Write release notes</div>
-                    <div class="task-description">Draft the release summary for the team.</div>
-                    <div class="task-meta">
-                        <span class="task-assignee">Assignee: Jamie</span>
-                        <div class="task-actions">
-                            <span class="priority-pill low">Low</span>
-                            <button type="button">Edit</button>
-                        </div>
-                    </div>
-                </article>
-            </section>
+        <div class="board-layout">
+            <div class="board-toolbar" aria-label="Filters and bulk actions">
+                <label>
+                    Status
+                    <select id="filter-status">
+                        <option value="">All</option>
+                        <option value="ToDo">To Do</option>
+                        <option value="InProgress">In Progress</option>
+                        <option value="Done">Done</option>
+                    </select>
+                </label>
+                <label>
+                    Priority
+                    <select id="filter-priority">
+                        <option value="">All</option>
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+                    </select>
+                </label>
+                <label>
+                    Saved view
+                    <select id="saved-view-select">
+                        <option value="">None</option>
+                    </select>
+                </label>
+                <label>
+                    View name
+                    <input type="text" id="saved-view-name" placeholder="e.g. High priority" maxlength="40">
+                </label>
+                <div class="toolbar-actions">
+                    <button type="button" id="apply-filters-button" class="primary">Apply filters</button>
+                    <button type="button" id="clear-filters-button">Clear</button>
+                    <button type="button" id="save-view-button">Save view</button>
+                    <button type="button" id="delete-view-button">Delete view</button>
+                    <button type="button" id="bulk-delete-button" class="danger">Delete selected</button>
+                </div>
+                <div class="selection-hint" id="selection-hint">0 selected</div>
+            </div>
+            <div class="task-board">
+                <section class="task-column" data-status="ToDo">
+                    <h2>To Do <span class="task-count">0</span></h2>
+                </section>
+                <section class="task-column" data-status="InProgress">
+                    <h2>In Progress <span class="task-count">0</span></h2>
+                </section>
+                <section class="task-column" data-status="Done">
+                    <h2>Done <span class="task-count">0</span></h2>
+                </section>
+            </div>
+            <aside class="board-activity" aria-label="Activity log">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem;">
+                    <h3>Activity</h3>
+                    <button type="button" class="refresh-activity" id="refresh-activity">Refresh</button>
+                </div>
+                <div class="activity-list" id="global-activity-list">
+                    <div class="activity-item">Loading activity…</div>
+                </div>
+            </aside>
         </div>
     </main>
     <div class="modal-overlay" id="task-modal-overlay">
@@ -438,15 +690,313 @@
                     <button type="submit" class="submit-btn">Save</button>
                 </div>
             </form>
+            <section class="comments-panel" id="comments-panel" hidden>
+                <h4>Comments</h4>
+                <div class="comments-list" id="comments-list"></div>
+                <div class="comment-compose">
+                    <input type="text" id="new-comment-text" placeholder="Add a comment" maxlength="1000">
+                    <button type="button" id="add-comment-button">Add</button>
+                </div>
+                <p class="error-text" id="comment-error"></p>
+            </section>
+            <section class="activity-panel" id="task-activity-panel" hidden>
+                <h4>Task activity</h4>
+                <div class="activity-list" id="task-activity-list"></div>
+            </section>
         </div>
     </div>
     <script>
         const BASE_URL = 'http://localhost:8000';
+        const SAVED_VIEWS_KEY = 'taskTracker.savedViews';
         const priorityOrder = { High: 0, Medium: 1, Low: 2 };
         let tasks = [];
         let draggedTaskId = null;
         let currentMode = 'create';
         let currentTaskId = null;
+        let selectedTaskIds = new Set();
+        let activeFilters = { status: '', priority: '' };
+
+        function updateSelectionHint() {
+            const hint = document.getElementById('selection-hint');
+            if (hint) {
+                hint.textContent = `${selectedTaskIds.size} selected`;
+            }
+        }
+
+        function loadSavedViews() {
+            try {
+                return JSON.parse(localStorage.getItem(SAVED_VIEWS_KEY) || '{}');
+            } catch (error) {
+                return {};
+            }
+        }
+
+        function persistSavedViews(views) {
+            localStorage.setItem(SAVED_VIEWS_KEY, JSON.stringify(views));
+        }
+
+        function refreshSavedViewSelect() {
+            const select = document.getElementById('saved-view-select');
+            if (!select) return;
+            const views = loadSavedViews();
+            const current = select.value;
+            select.innerHTML = '<option value="">None</option>' + Object.keys(views)
+                .sort()
+                .map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`)
+                .join('');
+            if (views[current]) {
+                select.value = current;
+            }
+        }
+
+        function getFilterValuesFromControls() {
+            return {
+                status: document.getElementById('filter-status')?.value || '',
+                priority: document.getElementById('filter-priority')?.value || ''
+            };
+        }
+
+        function applyFiltersToControls(filters) {
+            const statusSelect = document.getElementById('filter-status');
+            const prioritySelect = document.getElementById('filter-priority');
+            if (statusSelect) statusSelect.value = filters.status || '';
+            if (prioritySelect) prioritySelect.value = filters.priority || '';
+        }
+
+        async function applyFilters() {
+            activeFilters = getFilterValuesFromControls();
+            selectedTaskIds.clear();
+            updateSelectionHint();
+            await fetchTasks();
+        }
+
+        async function clearFilters() {
+            activeFilters = { status: '', priority: '' };
+            applyFiltersToControls(activeFilters);
+            const viewSelect = document.getElementById('saved-view-select');
+            if (viewSelect) viewSelect.value = '';
+            selectedTaskIds.clear();
+            updateSelectionHint();
+            await fetchTasks();
+        }
+
+        function saveCurrentView() {
+            const nameInput = document.getElementById('saved-view-name');
+            const name = (nameInput?.value || '').trim();
+            if (!name) {
+                renderNotice('View name required', 'Enter a name before saving a filter preset.', '', null);
+                return;
+            }
+            const views = loadSavedViews();
+            views[name] = getFilterValuesFromControls();
+            persistSavedViews(views);
+            refreshSavedViewSelect();
+            const select = document.getElementById('saved-view-select');
+            if (select) select.value = name;
+            if (nameInput) nameInput.value = '';
+            renderNotice('View saved', `"${name}" stored in this browser.`, '', null);
+        }
+
+        function deleteSelectedView() {
+            const select = document.getElementById('saved-view-select');
+            const name = select?.value;
+            if (!name) return;
+            const views = loadSavedViews();
+            delete views[name];
+            persistSavedViews(views);
+            refreshSavedViewSelect();
+        }
+
+        async function loadSelectedView() {
+            const select = document.getElementById('saved-view-select');
+            const name = select?.value;
+            if (!name) return;
+            const views = loadSavedViews();
+            const filters = views[name];
+            if (!filters) return;
+            applyFiltersToControls(filters);
+            await applyFilters();
+        }
+
+        async function bulkDeleteSelected() {
+            if (selectedTaskIds.size === 0) {
+                renderNotice('Nothing selected', 'Select one or more tasks first.', '', null);
+                return;
+            }
+            const taskIds = Array.from(selectedTaskIds);
+            try {
+                const response = await fetch(`${BASE_URL}/tasks/bulk-delete`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ task_ids: taskIds })
+                });
+                if (!response.ok) {
+                    throw new Error(`Bulk delete failed (${response.status})`);
+                }
+                const result = await response.json();
+                selectedTaskIds.clear();
+                updateSelectionHint();
+                await fetchTasks();
+                await fetchActivity();
+                const missing = (result.not_found || []).length;
+                renderNotice(
+                    `Deleted ${result.deleted.length} task(s)`,
+                    missing ? `${missing} id(s) were already missing.` : 'Bulk delete completed.',
+                    '',
+                    null
+                );
+            } catch (error) {
+                renderNotice('Bulk delete failed', error?.message || 'Please try again.', 'Retry', bulkDeleteSelected);
+            }
+        }
+
+        function attachToolbarEvents() {
+            document.getElementById('apply-filters-button')?.addEventListener('click', applyFilters);
+            document.getElementById('clear-filters-button')?.addEventListener('click', clearFilters);
+            document.getElementById('save-view-button')?.addEventListener('click', saveCurrentView);
+            document.getElementById('delete-view-button')?.addEventListener('click', deleteSelectedView);
+            document.getElementById('saved-view-select')?.addEventListener('change', loadSelectedView);
+            document.getElementById('bulk-delete-button')?.addEventListener('click', bulkDeleteSelected);
+        }
+
+        function formatTimestamp(value) {
+            if (!value) return '';
+            try {
+                return new Date(value).toLocaleString();
+            } catch (error) {
+                return String(value);
+            }
+        }
+
+        function renderActivityItems(container, events, emptyMessage) {
+            if (!container) return;
+            if (!events || events.length === 0) {
+                container.innerHTML = `<div class="activity-item">${escapeHtml(emptyMessage)}</div>`;
+                return;
+            }
+            container.innerHTML = events.map((event) => `
+                <div class="activity-item">
+                    <div class="event-type">${escapeHtml(event.event_type)}</div>
+                    <div>${escapeHtml(event.message)}</div>
+                    <div class="activity-meta">${escapeHtml(formatTimestamp(event.created_at))}</div>
+                </div>
+            `).join('');
+        }
+
+        async function fetchActivity() {
+            const container = document.getElementById('global-activity-list');
+            try {
+                const response = await fetch(`${BASE_URL}/activity`);
+                if (!response.ok) {
+                    throw new Error(`Request failed with status ${response.status}`);
+                }
+                const events = await response.json();
+                renderActivityItems(container, events, 'No activity yet');
+            } catch (error) {
+                renderActivityItems(container, [], error?.message || 'Unable to load activity');
+            }
+        }
+
+        async function loadTaskComments(taskId) {
+            const list = document.getElementById('comments-list');
+            const error = document.getElementById('comment-error');
+            if (!list) return;
+            if (error) error.textContent = '';
+            try {
+                const response = await fetch(`${BASE_URL}/tasks/${taskId}/comments`);
+                if (!response.ok) {
+                    throw new Error('Unable to load comments');
+                }
+                const comments = await response.json();
+                if (comments.length === 0) {
+                    list.innerHTML = '<div class="comment-item"><div>No comments yet</div></div>';
+                    return;
+                }
+                list.innerHTML = comments.map((comment) => `
+                    <div class="comment-item" data-comment-id="${escapeHtml(comment.id)}">
+                        <div>
+                            <div>${escapeHtml(comment.text)}</div>
+                            <div class="comment-meta">${escapeHtml(formatTimestamp(comment.created_at))}</div>
+                        </div>
+                        <button type="button" data-delete-comment="${escapeHtml(comment.id)}">Delete</button>
+                    </div>
+                `).join('');
+                list.querySelectorAll('[data-delete-comment]').forEach((button) => {
+                    button.addEventListener('click', () => deleteComment(taskId, button.dataset.deleteComment));
+                });
+            } catch (err) {
+                list.innerHTML = `<div class="comment-item"><div>${escapeHtml(err.message)}</div></div>`;
+            }
+        }
+
+        async function loadTaskActivity(taskId) {
+            const list = document.getElementById('task-activity-list');
+            try {
+                const response = await fetch(`${BASE_URL}/tasks/${taskId}/activity`);
+                if (!response.ok) {
+                    throw new Error('Unable to load task activity');
+                }
+                const events = await response.json();
+                renderActivityItems(list, events, 'No activity for this task');
+            } catch (error) {
+                renderActivityItems(list, [], error?.message || 'Unable to load task activity');
+            }
+        }
+
+        async function addComment() {
+            const input = document.getElementById('new-comment-text');
+            const error = document.getElementById('comment-error');
+            if (!currentTaskId || !input) return;
+            const text = input.value.trim();
+            if (!text) {
+                if (error) error.textContent = 'Comment text is required';
+                return;
+            }
+            try {
+                const response = await fetch(`${BASE_URL}/tasks/${currentTaskId}/comments`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text })
+                });
+                if (!response.ok) {
+                    let detail = 'Unable to add comment';
+                    try {
+                        const body = await response.json();
+                        detail = body?.detail || detail;
+                    } catch (parseError) {
+                        detail = response.statusText || detail;
+                    }
+                    if (error) error.textContent = typeof detail === 'string' ? detail : 'Unable to add comment';
+                    return;
+                }
+                input.value = '';
+                if (error) error.textContent = '';
+                await loadTaskComments(currentTaskId);
+                await loadTaskActivity(currentTaskId);
+                await fetchTasks();
+                await fetchActivity();
+            } catch (err) {
+                if (error) error.textContent = err?.message || 'Unable to add comment';
+            }
+        }
+
+        async function deleteComment(taskId, commentId) {
+            const error = document.getElementById('comment-error');
+            try {
+                const response = await fetch(`${BASE_URL}/tasks/${taskId}/comments/${commentId}`, {
+                    method: 'DELETE'
+                });
+                if (!response.ok) {
+                    throw new Error('Unable to delete comment');
+                }
+                await loadTaskComments(taskId);
+                await loadTaskActivity(taskId);
+                await fetchTasks();
+                await fetchActivity();
+            } catch (err) {
+                if (error) error.textContent = err?.message || 'Unable to delete comment';
+            }
+        }
 
         function escapeHtml(value) {
             return String(value ?? '')
@@ -609,6 +1159,7 @@
                 const updatedTask = await response.json();
                 tasks = tasks.map((task) => String(task.id) === String(taskId) ? updatedTask : task);
                 renderBoard(tasks);
+                fetchActivity();
             } catch (error) {
                 tasks = tasks.map((task) => String(task.id) === String(taskId) ? { ...task, status: previousStatus } : task);
                 renderBoard(tasks);
@@ -668,6 +1219,23 @@
             if (form) {
                 form.addEventListener('submit', handleTaskSubmit);
             }
+            const addCommentButton = document.getElementById('add-comment-button');
+            if (addCommentButton) {
+                addCommentButton.addEventListener('click', addComment);
+            }
+            const commentInput = document.getElementById('new-comment-text');
+            if (commentInput) {
+                commentInput.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        addComment();
+                    }
+                });
+            }
+            const refreshActivity = document.getElementById('refresh-activity');
+            if (refreshActivity) {
+                refreshActivity.addEventListener('click', fetchActivity);
+            }
             document.addEventListener('keydown', closeOnEscape);
         }
 
@@ -696,6 +1264,13 @@
                 element.textContent = '';
             });
 
+            const commentsPanel = document.getElementById('comments-panel');
+            const activityPanel = document.getElementById('task-activity-panel');
+            const commentError = document.getElementById('comment-error');
+            const commentInput = document.getElementById('new-comment-text');
+            if (commentError) commentError.textContent = '';
+            if (commentInput) commentInput.value = '';
+
             if (mode === 'edit' && task) {
                 taskIdInput.value = task.id || '';
                 titleInput.value = task.title || '';
@@ -703,6 +1278,10 @@
                 statusInput.value = task.status || 'ToDo';
                 priorityInput.value = task.priority || 'Medium';
                 assigneeInput.value = task.assignee || '';
+                if (commentsPanel) commentsPanel.hidden = false;
+                if (activityPanel) activityPanel.hidden = false;
+                loadTaskComments(task.id);
+                loadTaskActivity(task.id);
             } else {
                 taskIdInput.value = '';
                 titleInput.value = '';
@@ -710,6 +1289,8 @@
                 statusInput.value = 'ToDo';
                 priorityInput.value = 'Medium';
                 assigneeInput.value = '';
+                if (commentsPanel) commentsPanel.hidden = true;
+                if (activityPanel) activityPanel.hidden = true;
             }
             overlay.classList.add('open');
         }
@@ -862,6 +1443,7 @@
 
                 closeModal();
                 await fetchTasks();
+                await fetchActivity();
             } catch (error) {
                 showModalError(error?.message || 'Could not save task.', 'title');
             }
@@ -939,22 +1521,43 @@
                     const assignee = escapeHtml(task.assignee || 'Unassigned');
                     const priority = escapeHtml(task.priority || 'Medium');
                     const priorityClass = (task.priority || 'Medium').toLowerCase();
+                    const commentCount = Number(task.comment_count || 0);
+                    const isSelected = selectedTaskIds.has(String(task.id));
+                    if (isSelected) {
+                        card.classList.add('selected');
+                    }
 
                     card.innerHTML = `
+                        <input class="select-task" type="checkbox" ${isSelected ? 'checked' : ''} aria-label="Select task">
                         <div class="task-title">${title}</div>
                         ${description ? `<div class="task-description">${description}</div>` : ''}
                         <div class="task-meta">
                             <span class="task-assignee">Assignee: ${assignee}</span>
                             <div class="task-actions">
                                 <span class="priority-pill ${priorityClass}">${priority}</span>
+                                <span class="comment-count-pill">${commentCount} comment${commentCount === 1 ? '' : 's'}</span>
                                 <button type="button">Edit</button>
                             </div>
                         </div>
                     `;
+                    const checkbox = card.querySelector('.select-task');
+                    checkbox.addEventListener('click', (event) => event.stopPropagation());
+                    checkbox.addEventListener('change', (event) => {
+                        const id = String(task.id);
+                        if (event.target.checked) {
+                            selectedTaskIds.add(id);
+                            card.classList.add('selected');
+                        } else {
+                            selectedTaskIds.delete(id);
+                            card.classList.remove('selected');
+                        }
+                        updateSelectionHint();
+                    });
                     column.appendChild(card);
                     attachEditButtons();
                 });
             });
+            updateSelectionHint();
         }
 
         function renderErrorState(error) {
@@ -982,17 +1585,24 @@
         async function fetchTasks() {
             renderLoadingState();
             try {
-                const response = await fetch(`${BASE_URL}/tasks`);
+                const params = new URLSearchParams();
+                if (activeFilters.status) params.set('status', activeFilters.status);
+                if (activeFilters.priority) params.set('priority', activeFilters.priority);
+                const query = params.toString();
+                const response = await fetch(`${BASE_URL}/tasks${query ? `?${query}` : ''}`);
                 if (!response.ok) {
                     throw new Error(`Request failed with status ${response.status}`);
                 }
                 tasks = await response.json();
+                const visibleIds = new Set(tasks.map((task) => String(task.id)));
+                selectedTaskIds = new Set(Array.from(selectedTaskIds).filter((id) => visibleIds.has(id)));
                 attachColumnListeners();
                 if (tasks.length === 0) {
                     renderEmptyState();
                 } else {
                     renderBoard(tasks);
                 }
+                updateSelectionHint();
             } catch (error) {
                 console.error('Failed to fetch tasks', error);
                 renderErrorState(error);
@@ -1002,7 +1612,11 @@
         document.addEventListener('DOMContentLoaded', () => {
             attachColumnListeners();
             attachModalEvents();
+            attachToolbarEvents();
+            refreshSavedViewSelect();
+            updateSelectionHint();
             fetchTasks();
+            fetchActivity();
         });
     </script>
 </body>

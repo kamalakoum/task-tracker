@@ -10,7 +10,17 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app import storage, __version__
 from app.business_rules import validate_status_transition
-from app.models import TaskCreate, TaskResponse, TaskStatus, TaskPriority, TaskUpdate
+from app.models import (
+    BulkDeleteRequest,
+    BulkDeleteResponse,
+    TaskCreate,
+    TaskResponse,
+    TaskStatus,
+    TaskPriority,
+    TaskUpdate,
+)
+from app.routes.activity import router as activity_router
+from app.routes.comments import router as comments_router
 from app.routes.health import router as health_router
 from app.routes.version import router as version_router
 
@@ -42,6 +52,8 @@ app.add_middleware(
 # Register routes
 app.include_router(health_router)
 app.include_router(version_router)
+app.include_router(comments_router)
+app.include_router(activity_router)
 
 
 @app.post("/tasks", response_model=TaskResponse, status_code=status.HTTP_201_CREATED, tags=["tasks"])
@@ -65,6 +77,17 @@ def create_task(payload: TaskCreate) -> TaskResponse:
         Response: {"id": "...", "title": "Buy groceries", ...}
     """
     return storage.add_task(payload)
+
+
+@app.post("/tasks/bulk-delete", response_model=BulkDeleteResponse, tags=["tasks"])
+def bulk_delete_tasks(payload: BulkDeleteRequest) -> BulkDeleteResponse:
+    """Delete multiple tasks in one request.
+
+    Partial success is allowed: missing ids are returned in `not_found`
+    while existing ids are deleted and listed in `deleted`.
+    """
+    deleted, not_found = storage.bulk_delete_tasks(payload.task_ids)
+    return BulkDeleteResponse(deleted=deleted, not_found=not_found)
 
 
 @app.get("/tasks", response_model=list[TaskResponse], tags=["tasks"])
