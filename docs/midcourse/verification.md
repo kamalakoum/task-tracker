@@ -6,11 +6,16 @@ Result: **19 passed**
 
 ## Backend tests (after comments + activity)
 Command: `python -m pytest -q`  
-Result: **36 passed**
+Result: **36 passed** (comments + activity added)
+
+After optional extensions + midcourse packaging:
+Command: `python -m pytest -q`  
+Result: **39 passed** (includes `tests/test_bulk.py`)
 
 New suites:
-- `tests/test_comments.py`
-- `tests/test_activity.py`
+- `tests/test_comments.py` (10 tests)
+- `tests/test_activity.py` (7 tests)
+- `tests/test_bulk.py` (3 tests; optional extension)
 
 ## Manual / API smoke checks
 Used TestClient smoke script after pytest:

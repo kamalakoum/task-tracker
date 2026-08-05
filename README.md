@@ -1,9 +1,18 @@
 # Task Tracker Backend
 
 A lightweight FastAPI backend for tracking tasks, built as a simple monolithic
-application for learning purposes. It uses direct SQLite access with minimal
-layering instead of an ORM, prioritizing clarity and fast iteration over
-enterprise-style architecture.
+application for learning purposes. It prioritizes clarity and fast iteration.
+Task data is stored in memory (not persisted across restarts).
+
+## Mid-course features
+
+This branch (`mid-course-project`) includes:
+
+- **Task comments** — add, list, and delete comments on a task
+- **Activity log** — global and per-task activity events
+- **Optional extensions** — bulk delete, saved filter views (browser localStorage), light UI polish
+
+Assessment docs live in [`docs/midcourse/`](docs/midcourse/).
 
 ## Setup
 
@@ -37,25 +46,43 @@ cp .env.example .env
 Copy-Item .env.example .env
 ```
 
-### 3. Start the server
+Do not commit real secrets. `.env` is for local config only; use `.env.example` as the template.
+
+## Run the backend
 
 ```bash
+source venv/bin/activate   # if not already active
 uvicorn app.main:app --reload
 ```
 
-The API will be available at `http://127.0.0.1:8000`.
+- API: http://127.0.0.1:8000
+- Interactive docs: http://127.0.0.1:8000/docs
+- Health check: `curl http://127.0.0.1:8000/health`
 
-### 4. Test the health endpoint
+## Open the frontend
+
+Keep the backend running, then in a second terminal:
 
 ```bash
-curl http://127.0.0.1:8000/health
+cd frontend
+python3 -m http.server 5500
 ```
 
-Expected response:
-```json
-{"status": "ok", "timestamp": "2026-07-05T12:34:56.789012+00:00"}
-```# tasks-tracker
-# tasks-tracker
-# tasks-tracker
-# tasks-tracker
-# task-tracker
+Open http://127.0.0.1:5500 in your browser.
+
+You can also open `frontend/index.html` directly in a browser. The UI calls `http://localhost:8000`.
+
+## Run tests
+
+```bash
+source venv/bin/activate
+pytest
+```
+
+Useful variants:
+
+```bash
+pytest -v
+pytest tests/test_comments.py tests/test_activity.py
+pytest -k "comment or activity"
+```
