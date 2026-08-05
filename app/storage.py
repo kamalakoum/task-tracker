@@ -185,6 +185,27 @@ def delete_task(task_id: str) -> bool:
     return True
 
 
+def bulk_delete_tasks(task_ids: list[str]) -> tuple[list[str], list[str]]:
+    """Delete many tasks. Returns (deleted_ids, not_found_ids)."""
+    deleted: list[str] = []
+    not_found: list[str] = []
+    # Preserve request order while de-duplicating
+    seen: set[str] = set()
+    ordered_ids: list[str] = []
+    for task_id in task_ids:
+        if task_id in seen:
+            continue
+        seen.add(task_id)
+        ordered_ids.append(task_id)
+
+    for task_id in ordered_ids:
+        if delete_task(task_id):
+            deleted.append(task_id)
+        else:
+            not_found.append(task_id)
+    return deleted, not_found
+
+
 def add_comment(task_id: str, payload: CommentCreate) -> Optional[CommentResponse]:
     """Add a comment to a task.
 

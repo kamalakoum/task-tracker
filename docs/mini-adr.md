@@ -36,3 +36,8 @@ Extend the existing in-memory Task Tracker with two scoped features required by 
 - Activity and comments reset with process restart (same as tasks).
 - Global activity retains deleted-task history for the current process lifetime.
 - Frontend depends on CORS already configured for local static hosting.
+
+## Follow-up optional extensions (kept small)
+- Bulk delete via `POST /tasks/bulk-delete` with partial success (`deleted` + `not_found`) instead of multi-status batch PATCH.
+- Saved views stored in browser `localStorage` only (no backend presets).
+- Light toolbar animation only; no theme system.

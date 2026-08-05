@@ -431,6 +431,98 @@
             align-items: start;
         }
 
+        .board-toolbar {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.65rem;
+            align-items: end;
+            background: rgba(255, 255, 255, 0.82);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 0.85rem 1rem;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+            animation: toolbar-in 280ms ease;
+        }
+
+        @keyframes toolbar-in {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .board-toolbar label {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .board-toolbar select,
+        .board-toolbar input[type="text"] {
+            border: 1px solid #d6deeb;
+            border-radius: 10px;
+            padding: 0.45rem 0.65rem;
+            min-width: 140px;
+            font: inherit;
+            background: #f8fbff;
+        }
+
+        .board-toolbar .toolbar-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+            margin-left: auto;
+        }
+
+        .board-toolbar button {
+            border: 1px solid #d6deeb;
+            background: white;
+            color: #334155;
+            border-radius: 999px;
+            padding: 0.45rem 0.8rem;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.82rem;
+        }
+
+        .board-toolbar button.danger {
+            border-color: #fecaca;
+            color: #b91c1c;
+            background: #fff5f5;
+        }
+
+        .board-toolbar button.primary {
+            border-color: transparent;
+            color: white;
+            background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+        }
+
+        .task-item {
+            position: relative;
+        }
+
+        .task-item .select-task {
+            position: absolute;
+            top: 0.65rem;
+            right: 0.65rem;
+            width: 1rem;
+            height: 1rem;
+            cursor: pointer;
+        }
+
+        .task-item.selected {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.18);
+        }
+
+        .selection-hint {
+            font-size: 0.8rem;
+            color: var(--muted);
+            width: 100%;
+        }
+
         .board-activity {
             background: var(--column-bg);
             border: 1px solid var(--border);
@@ -491,6 +583,44 @@
     </header>
     <main>
         <div class="board-layout">
+            <div class="board-toolbar" aria-label="Filters and bulk actions">
+                <label>
+                    Status
+                    <select id="filter-status">
+                        <option value="">All</option>
+                        <option value="ToDo">To Do</option>
+                        <option value="InProgress">In Progress</option>
+                        <option value="Done">Done</option>
+                    </select>
+                </label>
+                <label>
+                    Priority
+                    <select id="filter-priority">
+                        <option value="">All</option>
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+                    </select>
+                </label>
+                <label>
+                    Saved view
+                    <select id="saved-view-select">
+                        <option value="">None</option>
+                    </select>
+                </label>
+                <label>
+                    View name
+                    <input type="text" id="saved-view-name" placeholder="e.g. High priority" maxlength="40">
+                </label>
+                <div class="toolbar-actions">
+                    <button type="button" id="apply-filters-button" class="primary">Apply filters</button>
+                    <button type="button" id="clear-filters-button">Clear</button>
+                    <button type="button" id="save-view-button">Save view</button>
+                    <button type="button" id="delete-view-button">Delete view</button>
+                    <button type="button" id="bulk-delete-button" class="danger">Delete selected</button>
+                </div>
+                <div class="selection-hint" id="selection-hint">0 selected</div>
+            </div>
             <div class="task-board">
                 <section class="task-column" data-status="ToDo">
                     <h2>To Do <span class="task-count">0</span></h2>
@@ -572,11 +702,157 @@
     </div>
     <script>
         const BASE_URL = 'http://localhost:8000';
+        const SAVED_VIEWS_KEY = 'taskTracker.savedViews';
         const priorityOrder = { High: 0, Medium: 1, Low: 2 };
         let tasks = [];
         let draggedTaskId = null;
         let currentMode = 'create';
         let currentTaskId = null;
+        let selectedTaskIds = new Set();
+        let activeFilters = { status: '', priority: '' };
+
+        function updateSelectionHint() {
+            const hint = document.getElementById('selection-hint');
+            if (hint) {
+                hint.textContent = `${selectedTaskIds.size} selected`;
+            }
+        }
+
+        function loadSavedViews() {
+            try {
+                return JSON.parse(localStorage.getItem(SAVED_VIEWS_KEY) || '{}');
+            } catch (error) {
+                return {};
+            }
+        }
+
+        function persistSavedViews(views) {
+            localStorage.setItem(SAVED_VIEWS_KEY, JSON.stringify(views));
+        }
+
+        function refreshSavedViewSelect() {
+            const select = document.getElementById('saved-view-select');
+            if (!select) return;
+            const views = loadSavedViews();
+            const current = select.value;
+            select.innerHTML = '<option value="">None</option>' + Object.keys(views)
+                .sort()
+                .map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`)
+                .join('');
+            if (views[current]) {
+                select.value = current;
+            }
+        }
+
+        function getFilterValuesFromControls() {
+            return {
+                status: document.getElementById('filter-status')?.value || '',
+                priority: document.getElementById('filter-priority')?.value || ''
+            };
+        }
+
+        function applyFiltersToControls(filters) {
+            const statusSelect = document.getElementById('filter-status');
+            const prioritySelect = document.getElementById('filter-priority');
+            if (statusSelect) statusSelect.value = filters.status || '';
+            if (prioritySelect) prioritySelect.value = filters.priority || '';
+        }
+
+        async function applyFilters() {
+            activeFilters = getFilterValuesFromControls();
+            selectedTaskIds.clear();
+            updateSelectionHint();
+            await fetchTasks();
+        }
+
+        async function clearFilters() {
+            activeFilters = { status: '', priority: '' };
+            applyFiltersToControls(activeFilters);
+            const viewSelect = document.getElementById('saved-view-select');
+            if (viewSelect) viewSelect.value = '';
+            selectedTaskIds.clear();
+            updateSelectionHint();
+            await fetchTasks();
+        }
+
+        function saveCurrentView() {
+            const nameInput = document.getElementById('saved-view-name');
+            const name = (nameInput?.value || '').trim();
+            if (!name) {
+                renderNotice('View name required', 'Enter a name before saving a filter preset.', '', null);
+                return;
+            }
+            const views = loadSavedViews();
+            views[name] = getFilterValuesFromControls();
+            persistSavedViews(views);
+            refreshSavedViewSelect();
+            const select = document.getElementById('saved-view-select');
+            if (select) select.value = name;
+            if (nameInput) nameInput.value = '';
+            renderNotice('View saved', `"${name}" stored in this browser.`, '', null);
+        }
+
+        function deleteSelectedView() {
+            const select = document.getElementById('saved-view-select');
+            const name = select?.value;
+            if (!name) return;
+            const views = loadSavedViews();
+            delete views[name];
+            persistSavedViews(views);
+            refreshSavedViewSelect();
+        }
+
+        async function loadSelectedView() {
+            const select = document.getElementById('saved-view-select');
+            const name = select?.value;
+            if (!name) return;
+            const views = loadSavedViews();
+            const filters = views[name];
+            if (!filters) return;
+            applyFiltersToControls(filters);
+            await applyFilters();
+        }
+
+        async function bulkDeleteSelected() {
+            if (selectedTaskIds.size === 0) {
+                renderNotice('Nothing selected', 'Select one or more tasks first.', '', null);
+                return;
+            }
+            const taskIds = Array.from(selectedTaskIds);
+            try {
+                const response = await fetch(`${BASE_URL}/tasks/bulk-delete`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ task_ids: taskIds })
+                });
+                if (!response.ok) {
+                    throw new Error(`Bulk delete failed (${response.status})`);
+                }
+                const result = await response.json();
+                selectedTaskIds.clear();
+                updateSelectionHint();
+                await fetchTasks();
+                await fetchActivity();
+                const missing = (result.not_found || []).length;
+                renderNotice(
+                    `Deleted ${result.deleted.length} task(s)`,
+                    missing ? `${missing} id(s) were already missing.` : 'Bulk delete completed.',
+                    '',
+                    null
+                );
+            } catch (error) {
+                renderNotice('Bulk delete failed', error?.message || 'Please try again.', 'Retry', bulkDeleteSelected);
+            }
+        }
+
+        function attachToolbarEvents() {
+            document.getElementById('apply-filters-button')?.addEventListener('click', applyFilters);
+            document.getElementById('clear-filters-button')?.addEventListener('click', clearFilters);
+            document.getElementById('save-view-button')?.addEventListener('click', saveCurrentView);
+            document.getElementById('delete-view-button')?.addEventListener('click', deleteSelectedView);
+            document.getElementById('saved-view-select')?.addEventListener('change', loadSelectedView);
+            document.getElementById('bulk-delete-button')?.addEventListener('click', bulkDeleteSelected);
+        }
 
         function formatTimestamp(value) {
             if (!value) return '';
@@ -1241,8 +1517,13 @@
                     const priority = escapeHtml(task.priority || 'Medium');
                     const priorityClass = (task.priority || 'Medium').toLowerCase();
                     const commentCount = Number(task.comment_count || 0);
+                    const isSelected = selectedTaskIds.has(String(task.id));
+                    if (isSelected) {
+                        card.classList.add('selected');
+                    }
 
                     card.innerHTML = `
+                        <input class="select-task" type="checkbox" ${isSelected ? 'checked' : ''} aria-label="Select task">
                         <div class="task-title">${title}</div>
                         ${description ? `<div class="task-description">${description}</div>` : ''}
                         <div class="task-meta">
@@ -1254,10 +1535,24 @@
                             </div>
                         </div>
                     `;
+                    const checkbox = card.querySelector('.select-task');
+                    checkbox.addEventListener('click', (event) => event.stopPropagation());
+                    checkbox.addEventListener('change', (event) => {
+                        const id = String(task.id);
+                        if (event.target.checked) {
+                            selectedTaskIds.add(id);
+                            card.classList.add('selected');
+                        } else {
+                            selectedTaskIds.delete(id);
+                            card.classList.remove('selected');
+                        }
+                        updateSelectionHint();
+                    });
                     column.appendChild(card);
                     attachEditButtons();
                 });
             });
+            updateSelectionHint();
         }
 
         function renderErrorState(error) {
@@ -1285,17 +1580,24 @@
         async function fetchTasks() {
             renderLoadingState();
             try {
-                const response = await fetch(`${BASE_URL}/tasks`);
+                const params = new URLSearchParams();
+                if (activeFilters.status) params.set('status', activeFilters.status);
+                if (activeFilters.priority) params.set('priority', activeFilters.priority);
+                const query = params.toString();
+                const response = await fetch(`${BASE_URL}/tasks${query ? `?${query}` : ''}`);
                 if (!response.ok) {
                     throw new Error(`Request failed with status ${response.status}`);
                 }
                 tasks = await response.json();
+                const visibleIds = new Set(tasks.map((task) => String(task.id)));
+                selectedTaskIds = new Set(Array.from(selectedTaskIds).filter((id) => visibleIds.has(id)));
                 attachColumnListeners();
                 if (tasks.length === 0) {
                     renderEmptyState();
                 } else {
                     renderBoard(tasks);
                 }
+                updateSelectionHint();
             } catch (error) {
                 console.error('Failed to fetch tasks', error);
                 renderErrorState(error);
@@ -1305,6 +1607,9 @@
         document.addEventListener('DOMContentLoaded', () => {
             attachColumnListeners();
             attachModalEvents();
+            attachToolbarEvents();
+            refreshSavedViewSelect();
+            updateSelectionHint();
             fetchTasks();
             fetchActivity();
         });

@@ -37,3 +37,12 @@ Browser checks (with `uvicorn app.main:app --reload` + open `frontend/index.html
 ## Break Test evidence
 1. **Blank comment** — temporarily removed text validator expectation by posting `"text": "   "` → still 422 from model validation. Restored/confirmed test `test_add_comment_rejects_blank_text` fails if assertion expects 201.
 2. **Invalid status transition still blocked** — `ToDo → Done` remains 422; activity does not record a status_changed event for rejected transitions.
+
+## Optional extensions (second commit)
+Command: `python -m pytest -q`  
+Expected additions:
+- `POST /tasks/bulk-delete` with partial-success payload `{deleted, not_found}`
+- Frontend toolbar: status/priority filters, localStorage saved views, multi-select bulk delete
+- Light toolbar entrance animation
+
+Tests: `tests/test_bulk.py`

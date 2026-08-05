@@ -119,3 +119,16 @@ class ActivityEvent(BaseModel):
     message: str
     details: Optional[dict[str, str]] = None
     created_at: datetime
+
+
+class BulkDeleteRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    task_ids: list[str]
+
+
+class BulkDeleteResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    deleted: list[str]
+    not_found: list[str]
