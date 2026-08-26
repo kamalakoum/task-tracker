@@ -65,7 +65,17 @@ python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 
 - API: http://127.0.0.1:8000
 - Interactive docs: http://127.0.0.1:8000/docs
-- Health check: `curl http://127.0.0.1:8000/health`
+- Health check:
+
+```bash
+curl http://127.0.0.1:8000/health
+```
+
+Expected response (timestamp will differ):
+
+```json
+{"status":"ok","timestamp":"2026-08-02T07:21:05.324632+00:00"}
+```
 
 ### Open the frontend
 
@@ -84,17 +94,30 @@ You can also open `frontend/index.html` directly. The UI calls `http://localhost
 
 ```bash
 source venv/bin/activate
-pytest
+python -m pytest -q
 ```
+
+Verified result on this branch: `39 passed in 0.15s`.
 
 Useful variants:
 
 ```bash
-pytest -v
-pytest -v --tb=short
-pytest tests/test_comments.py tests/test_activity.py
-pytest -k "comment or activity"
+python -m pytest -v
+python -m pytest -v --tb=short
+python -m pytest tests/test_comments.py tests/test_activity.py
+python -m pytest -k "comment or activity"
 ```
+
+## How CI runs tests
+
+Workflow: `.github/workflows/ci.yml`
+
+```bash
+pip install -r requirements.txt
+pytest -v --tb=short
+```
+
+CI runs on every `push` and on `pull_request` to `main`. There is no `continue-on-error`, no `|| true`, and pytest is not skipped.
 
 ## How to run with Docker
 
@@ -104,23 +127,43 @@ docker run --rm -d -p 8000:8000 --name task-tracker-final task-tracker-backend:f
 curl http://127.0.0.1:8000/health
 ```
 
+Expected `/health` response (timestamp will differ):
+
+```json
+{"status":"ok","timestamp":"2026-08-02T07:21:17.641693+00:00"}
+```
+
 Stop the container when finished:
 
 ```bash
 docker stop task-tracker-final
 ```
 
+The image runs as non-root user `app` and does not bake in any `.env` secrets.
+
 ## Evidence files
 
 - [`docs/midcourse/`](docs/midcourse/) — mid-course user stories, ADR, prompt log, verification, reflection
-- [`docs/release-evidence.md`](docs/release-evidence.md)
-- [`docs/final-ai-review.md`](docs/final-ai-review.md)
-- [`docs/ai-playbook.md`](docs/ai-playbook.md)
+- [`docs/release-evidence.md`](docs/release-evidence.md) — verified run commands, test output, CI and Docker checks
+- [`docs/final-ai-review.md`](docs/final-ai-review.md) — AI review log, security findings, ownership statement
+- [`docs/ai-playbook.md`](docs/ai-playbook.md) — personal AI usage rules and review workflow
+- [`docs/security-review.md`](docs/security-review.md) — security findings with file evidence
 
 ## AI assistance summary
 
-AI helped draft or review CI/Docker docs, security notes, and debugging support during mid-course feature work.
+**What AI helped with:** drafting and reviewing README/CI/Docker documentation, grading security findings in `docs/security-review.md`, and debugging support during mid-course comments and activity work.
 
-I verified the work by running pytest, reviewing diffs, exercising Docker `/health`, and manually testing the Kanban UI (comments + activity).
+**How I verified the result:**
 
-One AI suggestion I rejected or corrected: describing the app as SQLite-backed — the real store is an in-memory dictionary in `app/storage.py`.
+- Ran `python -m pytest -q` — 39 tests passed.
+- Started the app with `python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000` and confirmed `GET /health` returns 200.
+- Built and ran the Docker image and confirmed `/health` returns 200 (see `docs/release-evidence.md`).
+- Reviewed diffs before accepting changes and manually tested the Kanban UI (comments + activity feed).
+
+**AI suggestions I rejected or corrected:**
+
+1. **SQLite-backed storage (wrong)** — AI suggested describing the app as SQLite-backed. I rejected this after reading `app/storage.py`, which uses an in-memory dictionary. I corrected the README to match the code.
+2. **Add auth/database to Docker (wrong)** — AI suggested adding a database or auth layer for the final project. I rejected this because it adds new product scope; the container stays a simple runtime wrapper.
+3. **Simplify CI workflow (noise)** — AI suggested a looser CI setup. I kept `.github/workflows/ci.yml` as-is because it already runs `pytest -v --tb=short` reliably.
+
+Full review grades and decisions are recorded in [`docs/final-ai-review.md`](docs/final-ai-review.md).
