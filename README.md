@@ -1,10 +1,14 @@
-# Task Tracker — Final Project
-
-Branch: `final-project` (built on top of `mid-course-project`)
+# Task Tracker
 
 A lightweight FastAPI backend for tracking tasks, built as a simple monolithic
 application for learning purposes. It prioritizes clarity and fast iteration.
 Task data is stored in memory (not persisted across restarts).
+
+## Final Project
+
+- **Branch:** `final-project` (built on top of `mid-course-project`)
+- **Scope:** mid-course features (comments + activity), CI, Docker, and release/AI evidence in `docs/`
+- **Evidence:** [`docs/release-evidence.md`](docs/release-evidence.md), [`docs/final-ai-review.md`](docs/final-ai-review.md)
 
 ## Features included from mid-course
 

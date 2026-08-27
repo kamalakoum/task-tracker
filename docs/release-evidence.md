@@ -2,16 +2,16 @@
 
 ## Baseline
 - Branch: final-project
-- Date: 2026-08-02
+- Date: 2026-08-27
 - Local app run command: `python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000`
 - `/health` result: `200` with body `{"status":"ok","timestamp":"2026-08-02T07:21:05.324632+00:00"}`
 - Frontend check: opened `frontend/index.html` in the browser and confirmed the Kanban board with the `New Task` button and board columns is visible.
 - Test command: `source venv/bin/activate && python -m pytest -q`
-- Test result: `19 passed in 0.08s`
+- Test result: `39 passed in 0.15s`
 
 ## CI evidence
 - Workflow file: `.github/workflows/ci.yml`
-- Latest run link or note: GitHub Actions workflow is configured for `push` and `pull_request`, and the command `pytest -v --tb=short` is the verification step.
+- Latest successful run: [CI #19 on `final-project`](https://github.com/kamalakoum/task-tracker/actions/runs/32955446444) (commit `43f80d6`, conclusion: success)
 - Test command used by CI: `pytest -v --tb=short`
 - Shortcut check: no `continue-on-error`, no `|| true`, and pytest is not skipped.
 

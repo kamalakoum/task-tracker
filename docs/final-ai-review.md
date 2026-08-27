@@ -1,5 +1,11 @@
 # Final AI Review and Ownership Evidence
 
+## Three AI usage rules
+
+1. **Never paste secrets or sensitive data into AI tools.** I do not share credentials, tokens, `.env` values, or real customer/personal data with an AI assistant.
+2. **Always verify before accepting.** I treat AI output as a draft and confirm material claims with a command (`pytest`, `curl /health`, `docker run`), a source read, or a manual UI check before recording or merging anything.
+3. **Record and grade AI contributions.** I keep evidence of what AI suggested, label each finding as useful, noisy, or wrong, and document what I accepted, rejected, or corrected (see the review tables below and [`docs/ai-playbook.md`](ai-playbook.md)).
+
 ## AGENTS.md guardrails
 - Repo-specific stack and commands included: yes
 - Docs-first/read-first guardrail included: yes
